@@ -131,9 +131,10 @@
     .part { cursor: pointer; transition: opacity .2s, filter .2s, transform .2s; transform-box: fill-box; transform-origin: center; }
     .part:hover, .part.is-active { filter: drop-shadow(0 0 10px color-mix(in oklab, var(--primary) 80%, transparent)); transform: scale(1.015); }
     .part.is-dim { opacity: .3; }
+    .part.is-dim:hover, .part.is-dim:focus-visible { opacity: 1; }
     .part-hit { fill: transparent; stroke: transparent; stroke-width: 12; }
     .part-outline { fill: color-mix(in oklab, var(--pcb) 80%, transparent); stroke: var(--metal); stroke-width: 2; }
-    .part.is-active .part-outline, .part:hover .part-outline { stroke: var(--primary); stroke-width: 3; }
+    .part.is-active .part-outline, .part:hover .part-outline, .part:focus-visible .part-outline { stroke: var(--primary); stroke-width: 3; }
 
     .detail-panel { min-height: 600px; padding: 34px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
     .detail-panel::before { content: ""; position: absolute; width: 180px; height: 180px; right: -40px; top: -40px; border-radius: 50%; background: color-mix(in oklab, var(--primary) 8%, transparent); filter: blur(30px); }
@@ -894,79 +895,184 @@
         <div class="panel pc-panel">
           <div class="hover-label" id="hover-label">Hover a component</div>
           <div class="pc-wrap">
-            <svg id="pc-svg" viewBox="0 0 700 580" role="img" aria-labelledby="pc-title pc-desc">
-              <title id="pc-title">Interactive cutaway desktop computer</title>
-              <desc id="pc-desc">Select the CPU, graphics card, memory, motherboard, storage, power supply, or cooling system to learn about it.</desc>
+            <svg id="pc-svg" viewBox="0 0 700 580" role="group" aria-labelledby="pc-title pc-desc">
+              <title id="pc-title">Interactive desktop PC with the side panel removed</title>
+              <desc id="pc-desc">The rear of the case is on the left and the front is on the right. The motherboard is mounted above a bottom power supply. The CPU is visible through a cutaway in its cooler, with RAM beside it, an M.2 SSD on the board, and a graphics card in the PCIe slot. Select a part to learn about it.</desc>
               <defs>
-                <linearGradient id="caseFill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--surface-2)"/><stop offset="1" stop-color="var(--background)"/></linearGradient>
-                <linearGradient id="gpuFill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--pcb)"/><stop offset="1" stop-color="var(--surface)"/></linearGradient>
+                <linearGradient id="caseFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop stop-color="#263746"/><stop offset=".48" stop-color="#101a25"/><stop offset="1" stop-color="#0b111b"/>
+                </linearGradient>
+                <linearGradient id="boardFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop stop-color="#203540"/><stop offset=".6" stop-color="#12232b"/><stop offset="1" stop-color="#102027"/>
+                </linearGradient>
+                <linearGradient id="gpuFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop stop-color="#33434e"/><stop offset=".25" stop-color="#18242e"/><stop offset="1" stop-color="#10151f"/>
+                </linearGradient>
+                <linearGradient id="chipFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop stop-color="#bacbd1"/><stop offset=".6" stop-color="#708896"/><stop offset="1" stop-color="#405563"/>
+                </linearGradient>
+                <radialGradient id="fanFill">
+                  <stop stop-color="#253a47"/><stop offset=".7" stop-color="#15232c"/><stop offset="1" stop-color="#0a131c"/>
+                </radialGradient>
+                <pattern id="meshGrid" width="6" height="6" patternUnits="userSpaceOnUse">
+                  <path d="M1 1h1v1H1z" fill="#577083" opacity=".48"/>
+                </pattern>
                 <filter id="softGlow"><feGaussianBlur stdDeviation="8"/></filter>
+                <symbol id="caseFan" viewBox="0 0 100 100">
+                  <rect x="2" y="2" width="96" height="96" rx="8" fill="#1a2933" stroke="#405563" stroke-width="2"/>
+                  <circle cx="50" cy="50" r="44" fill="url(#fanFill)" stroke="#577486" stroke-width="2"/>
+                  <circle cx="50" cy="50" r="37" fill="none" stroke="var(--primary)" stroke-opacity=".38" stroke-width="3"/>
+                  <path d="M48 46c-5-13-4-22 8-24 14-2 20 8 9 15L55 51Zm6 2c14-4 23-1 26 10 3 13-7 21-16 12L47 55Zm-4 7c-3 14-11 21-21 17-12-4-13-15-2-20l20-6Z" fill="#405a69" stroke="#638293" stroke-width="1"/>
+                  <circle cx="50" cy="50" r="10" fill="#101c24" stroke="var(--primary)" stroke-opacity=".8" stroke-width="2"/>
+                  <circle cx="50" cy="50" r="3" fill="var(--primary)"/>
+                  <path d="M5 5h10M85 5h10M5 95h10m80 0h10" stroke="#648096" stroke-width="2"/>
+                </symbol>
               </defs>
-              <ellipse cx="354" cy="536" rx="246" ry="25" fill="var(--primary)" opacity=".1" filter="url(#softGlow)"/>
-              <path d="M94 46h494l38 38v436H94z" fill="url(#caseFill)" stroke="var(--metal)" stroke-width="4"/>
-              <path d="M588 46v38h38" fill="none" stroke="var(--metal)" stroke-width="4"/>
-              <rect x="119" y="73" width="465" height="420" rx="7" fill="var(--background)" stroke="var(--metal-dark)" stroke-width="2"/>
+
+              <!-- Open left side of a mid-tower: rear on the left, intake at the right. -->
+              <ellipse cx="358" cy="538" rx="255" ry="23" fill="var(--primary)" opacity=".12" filter="url(#softGlow)"/>
+              <path d="M85 52h526l22 22v442H85z" fill="url(#caseFill)" stroke="#5b7280" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M611 52v22h22" fill="none" stroke="#778b98" stroke-width="3"/>
+              <rect x="108" y="78" width="502" height="430" rx="4" fill="#09121b" stroke="#384e5c" stroke-width="2"/>
+              <path d="M116 86h486v412H116z" fill="none" stroke="#213846" stroke-width="2"/>
+              <path d="M88 91h18m-18 278h18m-18 114h18" stroke="#7993a0" stroke-width="3"/>
+              <rect x="612" y="96" width="17" height="398" rx="2" fill="url(#meshGrid)" stroke="#425864"/>
+              <path d="M120 80v425m411-425v425M610 80v425" stroke="#29404c" stroke-width="4" opacity=".6"/>
+              <rect x="123" y="107" width="22" height="46" rx="3" fill="#182a34" stroke="#58717d"/>
+              <path d="M128 114h12m-12 7h12m-12 7h12m-12 7h12" stroke="#68848f" stroke-width="2"/>
+              <path d="M124 328h25m-25 12h25m-25 12h25m-25 12h25m-25 12h25m-25 12h25m-25 12h25" stroke="#607480" stroke-width="4"/>
+              <rect x="110" y="511" width="505" height="7" rx="2" fill="#304653"/>
+              <path d="M114 519v12h62v-12m392 0v12h41v-12" fill="#18232b" stroke="#4a6370" stroke-width="2"/>
+              <text x="128" y="97" fill="#78909e" font-size="9" font-family="monospace" letter-spacing="1.5">REAR</text>
+              <text x="549" y="97" fill="#78909e" font-size="9" font-family="monospace" letter-spacing="1.5">FRONT</text>
+
+              <!-- Power cables are routed around the back edge of the board. -->
+              <g fill="none" stroke="#496170" stroke-width="5" stroke-linecap="round" opacity=".7">
+                <path d="M304 460C377 458 526 462 527 419V222"/>
+                <path d="M290 466C382 488 523 480 519 425V327h-34"/>
+                <path d="M220 469c-56-7-52-67-52-162V117h64"/>
+              </g>
+              <g fill="#819aaa" stroke="#283b46" stroke-width="2">
+                <rect x="522" y="212" width="12" height="24" rx="2"/>
+                <rect x="473" y="318" width="20" height="13" rx="2"/>
+                <rect x="224" y="109" width="21" height="13" rx="2"/>
+              </g>
+
+              <!-- Bottom shroud hides most of the PSU and the cable run. -->
+              <path d="M115 427h425v80H115z" fill="#15232c" stroke="#3c5663" stroke-width="2"/>
+              <path d="M116 430h424M335 438h173" stroke="#6c8290" stroke-opacity=".55" stroke-width="2"/>
+              <path d="M349 462h166m-166 8h166m-166 8h124" stroke="#314754" stroke-width="2"/>
+              <text x="438" y="493" fill="#68818f" font-size="9" font-family="monospace" letter-spacing="1">PSU SHROUD</text>
 
               <g class="part" data-part="motherboard" tabindex="0" role="button" aria-label="Motherboard">
-                <path class="part-outline" d="M242 105h267v286H242z"/>
-                <path d="M261 124h82v47h-82zm162 21h61v86h-61zm-160 187h202v36H263z" fill="none" stroke="var(--metal)" stroke-width="2"/>
-                <path d="M250 213h250M362 113v267M411 111v274" fill="none" stroke="var(--metal-dark)" stroke-width="2" stroke-dasharray="5 7"/>
-                <circle cx="267" cy="190" r="6" fill="var(--primary)" opacity=".75"/>
-                <rect class="part-hit" x="242" y="105" width="267" height="286"/>
+                <rect class="part-outline" x="226" y="124" width="309" height="302" rx="4"/>
+                <rect x="232" y="130" width="297" height="290" fill="url(#boardFill)" stroke="#55717c" stroke-width="1"/>
+                <path d="M246 150h40m-35 8h48m-49 117h50m-50 9h66m-59 34h30m160-162h58m-57 9h49M241 407h74m114 0h86" stroke="#4d6c73" stroke-width="2" opacity=".7"/>
+                <path d="M251 178v105h52m177-143v35h-61m88 91h-35v43m-195 79h89m121-29h32" fill="none" stroke="var(--primary)" stroke-opacity=".17" stroke-width="2"/>
+                <path d="M273 167v-29h38m111 18h-30m-30 140v-29m119 51h31" fill="none" stroke="#b8a470" stroke-opacity=".36" stroke-width="2"/>
+                <rect x="239" y="146" width="30" height="98" rx="2" fill="#2b3d47" stroke="#8396a1"/>
+                <path d="M244 156h20m-20 13h20m-20 12h20m-20 12h20m-20 12h20m-20 12h20" stroke="#aec0c6" stroke-width="3"/>
+                <rect x="314" y="190" width="86" height="92" rx="4" fill="#1d323b" stroke="#748b92" stroke-width="2"/>
+                <rect x="418" y="181" width="9" height="112" rx="2" fill="#101c23" stroke="#58727e"/>
+                <rect x="437" y="181" width="9" height="112" rx="2" fill="#101c23" stroke="#58727e"/>
+                <rect x="456" y="181" width="9" height="112" rx="2" fill="#101c23" stroke="#58727e"/>
+                <rect x="475" y="181" width="9" height="112" rx="2" fill="#101c23" stroke="#58727e"/>
+                <rect x="314" y="301" width="130" height="26" rx="2" fill="#0e1a23" stroke="#496574"/>
+                <rect x="245" y="336" width="270" height="10" rx="2" fill="#101920" stroke="#647883"/>
+                <rect x="245" y="363" width="113" height="7" rx="2" fill="#152530" stroke="#556f7b"/>
+                <rect x="245" y="389" width="172" height="7" rx="2" fill="#152530" stroke="#556f7b"/>
+                <rect x="467" y="382" width="42" height="31" rx="2" fill="#2b404a" stroke="#557681"/>
+                <circle cx="241" cy="139" r="4" fill="#91a3aa"/><circle cx="520" cy="139" r="4" fill="#91a3aa"/>
+                <circle cx="241" cy="411" r="4" fill="#91a3aa"/><circle cx="520" cy="411" r="4" fill="#91a3aa"/>
+                <text x="472" y="157" fill="#9aadb3" font-size="10" font-family="monospace">ATX</text>
+                <rect class="part-hit" x="226" y="124" width="309" height="302" rx="4"/>
               </g>
 
-              <g class="part" data-part="cpu" tabindex="0" role="button" aria-label="CPU">
-                <rect class="part-outline" x="287" y="180" width="98" height="91" rx="8"/>
-                <rect x="302" y="195" width="68" height="61" rx="4" fill="var(--surface-2)" stroke="var(--primary-glow)" stroke-width="2"/>
-                <path d="M313 205h46v41h-46zM302 181v-10m17 10v-10m17 10v-10m17 10v-10m17 10v-10" fill="none" stroke="var(--metal)" stroke-width="2"/>
-                <text x="336" y="229" fill="var(--primary-glow)" font-size="14" text-anchor="middle" font-family="var(--font-mono)">CPU</text>
-                <rect class="part-hit" x="280" y="173" width="112" height="105" rx="10"/>
+              <!-- Storage sits flat in an M.2 socket directly on the motherboard. -->
+              <g class="part" data-part="storage" tabindex="0" role="button" aria-label="M.2 storage drive">
+                <rect class="part-outline" x="320" y="302" width="123" height="27" rx="3"/>
+                <rect x="325" y="306" width="111" height="19" rx="2" fill="#132830"/>
+                <rect x="339" y="309" width="30" height="13" rx="1" fill="#304651" stroke="#69828b"/>
+                <rect x="374" y="309" width="25" height="13" rx="1" fill="#243d48" stroke="#69828b"/>
+                <text x="404" y="319" fill="var(--primary-glow)" font-size="7" font-family="monospace">M.2</text>
+                <circle cx="434" cy="315" r="3" fill="#b0bbc0"/>
+                <rect class="part-hit" x="313" y="296" width="138" height="40" rx="4"/>
               </g>
 
-              <g class="part" data-part="ram" tabindex="0" role="button" aria-label="Memory">
-                <rect class="part-outline" x="399" y="170" width="17" height="119" rx="3"/>
-                <rect class="part-outline" x="424" y="170" width="17" height="119" rx="3"/>
-                <path d="M405 181h5v18h-5zm0 27h5v18h-5zm0 27h5v18h-5zm0 27h5v18h-5zm25-81h5v18h-5zm0 27h5v18h-5zm0 27h5v18h-5zm0 27h5v18h-5z" fill="var(--primary)" opacity=".7"/>
-                <rect class="part-hit" x="391" y="162" width="58" height="135" rx="8"/>
+              <!-- Case fans and a CPU heatsink. The middle opens to reveal the CPU below. -->
+              <g class="part" data-part="cooling" tabindex="0" role="button" aria-label="Cooling fans and CPU heatsink">
+                <circle class="part-outline" cx="172" cy="205" r="49"/>
+                <use href="#caseFan" x="127" y="160" width="90" height="90"/>
+                <circle class="part-outline" cx="569" cy="183" r="41"/>
+                <use href="#caseFan" x="532" y="146" width="74" height="74"/>
+                <circle class="part-outline" cx="569" cy="284" r="41"/>
+                <use href="#caseFan" x="532" y="247" width="74" height="74"/>
+                <circle class="part-outline" cx="569" cy="385" r="41"/>
+                <use href="#caseFan" x="532" y="348" width="74" height="74"/>
+                <path class="part-outline" d="M299 187h98v101h-98z"/>
+                <rect x="304" y="191" width="88" height="93" rx="3" fill="#1a2c36" stroke="#728893" stroke-width="2"/>
+                <path d="M307 200h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82m-82 7h82" stroke="#5c7480" stroke-width="2" opacity=".82"/>
+                <path d="M301 204c-19-3-23 9-22 19m22 36c-18 2-22-4-22-19" fill="none" stroke="#a6754c" stroke-width="5" stroke-linecap="round"/>
+                <path d="M313 188v100m73-100v100" stroke="var(--primary)" stroke-opacity=".55" stroke-width="3"/>
+                <circle class="part-hit" cx="172" cy="205" r="51"/>
+                <circle class="part-hit" cx="569" cy="183" r="42"/>
+                <circle class="part-hit" cx="569" cy="284" r="42"/>
+                <circle class="part-hit" cx="569" cy="385" r="42"/>
+                <rect class="part-hit" x="293" y="181" width="111" height="113" rx="5"/>
               </g>
 
-              <g class="part" data-part="gpu" tabindex="0" role="button" aria-label="Graphics card">
-                <path class="part-outline" d="M179 310h291l18 17v91H179z" fill="url(#gpuFill)"/>
-                <circle cx="267" cy="363" r="39" fill="var(--background)" stroke="var(--metal)" stroke-width="3"/>
-                <circle cx="267" cy="363" r="10" fill="var(--primary)"/>
-                <path d="m267 326 8 26 24-13-17 22 24 13-28-2 4 28-15-24-15 24 4-28-28 2 24-13-17-22 24 13z" fill="var(--metal-dark)"/>
-                <circle cx="392" cy="363" r="39" fill="var(--background)" stroke="var(--metal)" stroke-width="3"/>
-                <circle cx="392" cy="363" r="10" fill="var(--primary)"/>
-                <path d="m392 326 8 26 24-13-17 22 24 13-28-2 4 28-15-24-15 24 4-28-28 2 24-13-17-22 24 13z" fill="var(--metal-dark)"/>
-                <text x="204" y="337" fill="var(--primary-glow)" font-size="12" font-family="var(--font-mono)">GRAPHICS</text>
-                <rect class="part-hit" x="170" y="300" width="327" height="127" rx="10"/>
+              <!-- Educational cutaway: the CPU is beneath the cooler in the socket. -->
+              <g class="part" data-part="cpu" tabindex="0" role="button" aria-label="CPU visible through the cooler cutaway">
+                <rect class="part-outline" x="321" y="209" width="57" height="58" rx="4"/>
+                <rect x="327" y="215" width="45" height="46" rx="3" fill="url(#chipFill)" stroke="#c0d3d7" stroke-width="2"/>
+                <rect x="332" y="220" width="35" height="36" rx="2" fill="#334952" stroke="#7eabb3"/>
+                <text x="349" y="241" fill="#dceef0" font-size="11" text-anchor="middle" font-weight="bold" font-family="monospace">CPU</text>
+                <path d="M326 206v-6m13 6v-6m13 6v-6m13 6v-6m13 6v-6" stroke="#a7bfc6" stroke-width="2"/>
+                <rect class="part-hit" x="318" y="206" width="63" height="64" rx="5"/>
               </g>
 
-              <g class="part" data-part="storage" tabindex="0" role="button" aria-label="Storage">
-                <rect class="part-outline" x="454" y="275" width="31" height="92" rx="3"/>
-                <circle cx="469.5" cy="291" r="4" fill="var(--primary)"/><path d="M463 310h13m-13 9h13m-13 9h13m-13 9h13" stroke="var(--metal)" stroke-width="2"/>
-                <rect class="part-hit" x="446" y="267" width="47" height="108" rx="7"/>
+              <g class="part" data-part="ram" tabindex="0" role="button" aria-label="RAM in DIMM slots beside the CPU">
+                <rect class="part-outline" x="435" y="184" width="14" height="105" rx="2"/>
+                <rect class="part-outline" x="473" y="184" width="14" height="105" rx="2"/>
+                <path d="M438 188h8v96h-8zm38 0h8v96h-8z" fill="#19373e"/>
+                <path d="M438 198h8m-8 13h8m-8 13h8m-8 13h8m-8 13h8m-8 13h8m38-65h8m-8 13h8m-8 13h8m-8 13h8m-8 13h8m-8 13h8" stroke="#58a2a2" stroke-width="3"/>
+                <path d="M436 187v-6h12v6m26 0v-6h12v6" fill="none" stroke="#d0d8d9" stroke-width="3"/>
+                <path d="M438 288v5h9v-5m29 0v5h9v-5" stroke="#caa872" stroke-width="2"/>
+                <rect class="part-hit" x="427" y="176" width="68" height="121" rx="4"/>
               </g>
 
-              <g class="part" data-part="cooling" tabindex="0" role="button" aria-label="Cooling">
-                <circle class="part-outline" cx="178" cy="172" r="56"/>
-                <circle cx="178" cy="172" r="12" fill="var(--primary)"/>
-                <path d="M178 119c20 0 33 14 23 27-6 8-13 7-23 26 0-19-8-20-16-25-15-10-5-28 16-28Zm46 72c-10 18-28 22-34 7-4-9 0-15-12-26 16 10 21 4 30 0 16-7 27 1 16 19Zm-91 0c-11-18-2-34 14-27 9 4 11 11 31 8-17 9-14 17-14 26 1 17-20 11-31-7Z" fill="var(--metal-dark)"/>
-                <path d="M234 171h30v-49h-68" fill="none" stroke="var(--metal)" stroke-width="6" stroke-linecap="round"/>
-                <rect class="part-hit" x="112" y="104" width="160" height="136" rx="65"/>
+              <!-- Standard horizontal GPU: its narrow side faces the open panel. -->
+              <g class="part" data-part="gpu" tabindex="0" role="button" aria-label="Graphics card in the PCI Express slot">
+                <path class="part-outline" d="M151 342h353l17 14v42H151z"/>
+                <path d="M154 346h349l14 12v35H154z" fill="url(#gpuFill)" stroke="#738894" stroke-width="2"/>
+                <rect x="140" y="337" width="16" height="68" rx="2" fill="#647c86" stroke="#aec0c6"/>
+                <path d="M145 347h7m-7 10h7m-7 10h7m-7 10h7m-7 10h7" stroke="#263945" stroke-width="3"/>
+                <path d="M169 352h326M169 389h330" stroke="#677f8b" stroke-width="3"/>
+                <path d="M174 373h29m8 0h29m8 0h29m8 0h29m8 0h29m8 0h29m8 0h29m8 0h29" stroke="#3f6674" stroke-width="10"/>
+                <path d="M182 399h298l-9 8H193z" fill="#233642" stroke="#69808a"/>
+                <rect x="468" y="332" width="26" height="12" rx="2" fill="#263e48" stroke="#a3b8c0"/>
+                <path d="M476 334v7m7-7v7" stroke="#d2aa73" stroke-width="2"/>
+                <text x="320" y="377" fill="#e1f6f8" font-size="15" text-anchor="middle" font-weight="bold" font-family="monospace" letter-spacing="2">GRAPHICS CARD</text>
+                <rect class="part-hit" x="138" y="328" width="387" height="80" rx="5"/>
               </g>
 
-              <g class="part" data-part="psu" tabindex="0" role="button" aria-label="Power supply">
-                <rect class="part-outline" x="135" y="430" width="181" height="62" rx="7"/>
-                <circle cx="169" cy="461" r="21" fill="var(--background)" stroke="var(--metal)" stroke-width="2"/>
-                <path d="M169 443v36m-18-18h36m-31-13 26 26m0-26-26 26" stroke="var(--metal-dark)" stroke-width="2"/>
-                <text x="260" y="465" fill="var(--primary-glow)" font-size="15" text-anchor="middle" font-family="var(--font-mono)">PSU</text>
-                <rect class="part-hit" x="127" y="422" width="197" height="78" rx="10"/>
+              <!-- PSU rests in the lower rear of the case behind a shroud cutout. -->
+              <g class="part" data-part="psu" tabindex="0" role="button" aria-label="Power supply in the bottom of the case">
+                <rect class="part-outline" x="135" y="443" width="188" height="61" rx="4"/>
+                <rect x="140" y="448" width="177" height="51" rx="2" fill="#1d2a35" stroke="#647885"/>
+                <path d="M150 457h27m-27 8h27m-27 8h27m-27 8h27m-27 8h27" stroke="#607681" stroke-width="3"/>
+                <path d="M190 454v38m111-38v38" stroke="#435965" stroke-width="2"/>
+                <text x="242" y="475" fill="var(--primary-glow)" font-size="15" text-anchor="middle" font-weight="bold" font-family="monospace">PSU</text>
+                <text x="242" y="489" fill="#8fa6af" font-size="9" text-anchor="middle" font-family="monospace">POWER SUPPLY</text>
+                <rect class="part-hit" x="129" y="437" width="200" height="73" rx="5"/>
               </g>
 
-              <path d="M139 92h58m-58 10h36" stroke="var(--metal-dark)" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="552" cy="102" r="6" fill="var(--primary)" opacity=".8"/>
-              <path d="M584 438h25M584 452h25M584 466h25M584 480h25" stroke="var(--metal-dark)" stroke-width="3"/>
+              <!-- The perimeter represents the removed glass side panel. -->
+              <path d="M98 65h521v444H98z" fill="none" stroke="#8fb0ba" stroke-opacity=".42" stroke-width="2" pointer-events="none"/>
+              <circle cx="101" cy="68" r="3" fill="#819aa3" pointer-events="none"/>
+              <circle cx="616" cy="68" r="3" fill="#819aa3" pointer-events="none"/>
+              <circle cx="101" cy="505" r="3" fill="#819aa3" pointer-events="none"/>
+              <circle cx="616" cy="505" r="3" fill="#819aa3" pointer-events="none"/>
             </svg>
           </div>
         </div>
@@ -977,7 +1083,7 @@
           </div>
           <p class="detail-kicker" id="detail-kicker">Interactive cutaway</p>
           <h2 class="detail-title" id="detail-title">Click any part of the PC</h2>
-          <p class="detail-copy" id="detail-copy">The side panel is off. Hover to identify a component, then click to focus it and learn what it does, why it matters, and what it plugs into.</p>
+          <p class="detail-copy" id="detail-copy">The side panel is off, and a cutaway shows the CPU beneath its cooler. Hover over a component, then click to learn what it does and where it connects.</p>
           <ul class="detail-facts" id="detail-facts"></ul>
           <div class="chips" id="quick-picks" aria-label="Quick component selection"></div>
         </aside>
